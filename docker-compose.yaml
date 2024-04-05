@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  spark-master:
+    build:
+      dockerfile: Dockerfile-spark
+    hostname: spark-master
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
+    ports:
+      - "8080:8080"
+      - "4041:4041"
+    networks:
+      - spark-network
+    volumes:
+      - ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+
+  jupyter:
+    build: .
+    ports:
+      - "8888:8888"
+    networks:
+      - spark-network
+    volumes:
+      - ./local_lake:/home/jovyan/work
+      - ./notebooks:/home/jovyan/
+      - ./spark-defaults.conf:/usr/local/spark/conf/spark-defaults.conf
+    depends_on:
+      - spark-master
+    command: "start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''"
+
+networks:
+  spark-network:
+volumes:
+  myvol:

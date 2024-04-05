@@ -1,0 +1,4 @@
+.metals
+.vscode
+notebooks/.*
+.DS_Store
